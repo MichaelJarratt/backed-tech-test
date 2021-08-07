@@ -1,0 +1,10 @@
+
+//This file is used by the "rest client" extension. I can use it to make an API request and see the response.
+
+//GET http://backed-tech-test.test/api/blogs http/1.1
+
+GET http://backed-tech-test.test/api/blog/1 http/1.1
+
+//GET http://backed-tech-test.test/api/singleBlogwithComments http/1.1
+
+
