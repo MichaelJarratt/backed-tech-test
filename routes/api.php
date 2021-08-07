@@ -42,8 +42,28 @@ Route::get('/blog', function(Request $request) {
     return $data;
 });
 
-Route::post('/blogsa', function() {
-    return "hello";
+Route::post('/comment', function(Request $request) {
+
+    //check all values are present
+    if(!$request->has(['title', 'name', 'email', 'comment', 'blog_id']))
+    {
+        return ['error' => 'missing input(s)'];
+    }
+
+    //check if the blog is valid
+    if(!Blog::where('id', $request->input('blog_id'))->exists())
+    {
+        return ['error' => 'invalid blog_id'];
+    }
+
+    return Comment::create([
+        'title' => $request->input('title'),
+        'name' => $request->input('name'),
+        'email' => $request->input('email'),
+        'comment' => $request->input('comment'),
+        'blog_id' => $request->input('blog_id'),
+    ]);
+
 });
 
 Route::put('/blogsb', function() {

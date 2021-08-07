@@ -5,6 +5,22 @@
 
 GET http://backed-tech-test.test/api/blog?id=1 http/1.1
 
-//GET http://backed-tech-test.test/api/singleBlogwithComments http/1.1
+###
+
+GET http://backed-tech-test.test/api/singleBlogwithComments http/1.1
+
+
+###
+
+POST http://backed-tech-test.test/api/comment http/1.1
+Content-Type: application/json
+
+{
+    "title": "Sir",
+    "name": "Michael",
+    "email": "Michael@Email.com",
+    "comment": "lorum ipsum dolor amet",
+    "blog_id": "44"
+}
 
 
