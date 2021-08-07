@@ -22,9 +22,24 @@ Route::get('/blogs', function() {
     return $data;
 });
 
-Route::get('/blog/{$id}', function($id) {
+Route::get('/blog', function(Request $request) {
+
+    //extract data from queryString
+    $id = $request->input('id');
+
+    //find the blog
     $blog = Blog::where('id',$id) -> get();
-    return $blog;
+
+    //find comments for blog
+    $comments = Comment::where('blog_id',$id) -> get();
+
+    //compose as return JSON
+    $data = [
+        'blog' => $blog,
+        'comments' => $comments
+    ];
+
+    return $data;
 });
 
 Route::post('/blogsa', function() {

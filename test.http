@@ -3,7 +3,7 @@
 
 //GET http://backed-tech-test.test/api/blogs http/1.1
 
-GET http://backed-tech-test.test/api/blog/1 http/1.1
+GET http://backed-tech-test.test/api/blog?id=1 http/1.1
 
 //GET http://backed-tech-test.test/api/singleBlogwithComments http/1.1
 
