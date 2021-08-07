@@ -1,5 +1,7 @@
 <?php
 
+use app\Models\Blog;
+use app\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

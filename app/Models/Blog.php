@@ -24,4 +24,9 @@ class Blog extends Model
         $this->attributes['title'] = $value;
         $this->attributes['slug'] = Str::slug($value);
     }
+
+    public function scopeGetBlog()
+    {
+        return Blog::all();
+    }
 }

@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// "/" is the default route just pointing to the server, no page/subdomain
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome'); //returns welcome.blade.php as default
+});
+
+Route::get('/test', function() {
+    return view ('test');
+});
+
+Route::get('/about', function() {
+    return view ('pages.about'); //directories seporated by periods
 });
