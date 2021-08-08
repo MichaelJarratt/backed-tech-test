@@ -87,6 +87,7 @@ Route::post('/comment', function(Request $request) {
 });
 
 //update comment
+//the blog_id should not be updatable, since it wouldn't make sense to amend which blog a comment belonged to
 Route::put('/updateComment/{id}', function($id, Request $request) {
     //I'm aware that this code is copied from the above route, however I don't know where the appropriate place to put this as reusable code would be within this framework
     if(!$request->has(['title', 'name', 'email', 'comment']))
@@ -106,6 +107,43 @@ Route::put('/updateComment/{id}', function($id, Request $request) {
         'email' => $request->input('email'),
         'comment' => $request->input('comment'),
     ]);
+
+    return ['status' => $status];
+});
+
+//update comment
+//alternate version, does not require all the fields and only updates those which are present
+Route::put('/partiallyUpdateComment/{id}', function($id, Request $request) {
+    //if no fields are being updated then return an error
+    if(!$request->hasAny(['title', 'name', 'email', 'comment']))
+    {
+        return ['error' => 'missing input(s)'];
+    }
+
+    $comment = Comment::find($id);
+    if($comment == null)
+    {
+        return ['error' => 'invalid comment_id'];
+    }
+
+    //update this instance of the model in memory and then save changes to database
+    if($request->has('title'))
+    {
+        $comment->title = $request->input('title');
+    }
+    if($request->has('name'))
+    {
+        $comment->name = $request->input('name');
+    }
+    if($request->has('email'))
+    {
+        $comment->email = $request->input('email');
+    }
+    if($request->has('comment'))
+    {
+        $comment->comment = $request->input('comment');
+    }
+    $status = $comment->save(); //replace the database instance with this instance
 
     return ['status' => $status];
 });
