@@ -17,11 +17,13 @@ use Illuminate\Support\Facades\Route;
 | Please make BLOG & COMMENT CRUD ROUTES
 */
 
+//get all the fields from all the blogs
 Route::get('/blogs', function() {
     $data = Blog::all();
     return $data;
 });
 
+//get all the fields from a single blog by ID (in QueryString)
 Route::get('/blog', function(Request $request) {
 
     //extract data from queryString
@@ -42,6 +44,24 @@ Route::get('/blog', function(Request $request) {
     return $data;
 });
 
+//alternate implementation of the API above. Did this after the update comment function and realised I could pass in the ID this way
+Route::get('/blog/{id}', function($id, Request $request){
+    //find the blog
+    $blog = Blog::where('id',$id) -> get();
+
+    //find comments for blog
+    $comments = Comment::where('blog_id',$id) -> get();
+
+    //compose as return JSON
+    $data = [
+        'blog' => $blog,
+        'comments' => $comments
+    ];
+
+    return $data;
+});
+
+//commit new comment to DB
 Route::post('/comment', function(Request $request) {
 
     //check all values are present
@@ -66,10 +86,41 @@ Route::post('/comment', function(Request $request) {
 
 });
 
-Route::put('/blogsb', function() {
-    return null;
+//update comment
+Route::put('/updateComment/{id}', function($id, Request $request) {
+    //I'm aware that this code is copied from the above route, however I don't know where the appropriate place to put this as reusable code would be within this framework
+    if(!$request->has(['title', 'name', 'email', 'comment']))
+    {
+        return ['error' => 'missing input(s)'];
+    }
+
+    $comment = Comment::find($id);
+    if($comment == null)
+    {
+        return ['error' => 'invalid comment_id'];
+    }
+
+    $status =  $comment->update([
+        'title' => $request->input('title'),
+        'name' => $request->input('name'),
+        'email' => $request->input('email'),
+        'comment' => $request->input('comment'),
+    ]);
+
+    return ['status' => $status];
 });
 
-Route::delete('/blogsc', function() {
-    return null;
+//delete comment
+Route::delete('/deleteComment/{id}', function($id) {
+
+    $comment = Comment::find($id);
+
+    if($comment == null)
+    {
+        return ['error' => 'invalid comment_id'];
+    }
+
+    $status = $comment->delete();
+
+    return ['status' => $status];
 });
