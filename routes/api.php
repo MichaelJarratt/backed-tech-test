@@ -5,6 +5,9 @@ use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\BlogAPIController;
+use App\Http\Controllers\CommentAPIController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,147 +21,24 @@ use Illuminate\Support\Facades\Route;
 */
 
 //get all the fields from all the blogs
-Route::get('/blogs', function() {
-    $data = Blog::all();
-    return $data;
-});
+Route::get('/blogs', [BlogApiController::class, 'getAll']);
 
 //get all the fields from a single blog by ID (in QueryString)
-Route::get('/blog', function(Request $request) {
-
-    //extract data from queryString
-    $id = $request->input('id');
-
-    //find the blog
-    $blog = Blog::where('id',$id) -> get();
-
-    //find comments for blog
-    $comments = Comment::where('blog_id',$id) -> get();
-
-    //compose as return JSON
-    $data = [
-        'blog' => $blog,
-        'comments' => $comments
-    ];
-
-    return $data;
-});
+Route::get('/blog', [BlogApiController::class, 'getByIDQueryString']);
 
 //alternate implementation of the API above. Did this after the update comment function and realised I could pass in the ID this way
-Route::get('/blog/{id}', function($id, Request $request){
-    //find the blog
-    $blog = Blog::where('id',$id) -> get();
-
-    //find comments for blog
-    $comments = Comment::where('blog_id',$id) -> get();
-
-    //compose as return JSON
-    $data = [
-        'blog' => $blog,
-        'comments' => $comments
-    ];
-
-    return $data;
-});
+Route::get('/blog/{id}', [BlogApiController::class, 'GetByID']);
 
 //commit new comment to DB
-Route::post('/comment', function(Request $request) {
-
-    //check all values are present
-    if(!$request->has(['title', 'name', 'email', 'comment', 'blog_id']))
-    {
-        return ['error' => 'missing input(s)'];
-    }
-
-    //check if the blog is valid
-    if(!Blog::where('id', $request->input('blog_id'))->exists())
-    {
-        return ['error' => 'invalid blog_id'];
-    }
-
-    return Comment::create([
-        'title' => $request->input('title'),
-        'name' => $request->input('name'),
-        'email' => $request->input('email'),
-        'comment' => $request->input('comment'),
-        'blog_id' => $request->input('blog_id'),
-    ]);
-
-});
+Route::post('/comment', [CommentApiController::class, 'commitComment']);
 
 //update comment
 //the blog_id should not be updatable, since it wouldn't make sense to amend which blog a comment belonged to
-Route::put('/updateComment/{id}', function($id, Request $request) {
-    //I'm aware that this code is copied from the above route, however I don't know where the appropriate place to put this as reusable code would be within this framework
-    if(!$request->has(['title', 'name', 'email', 'comment']))
-    {
-        return ['error' => 'missing input(s)'];
-    }
-
-    $comment = Comment::find($id);
-    if($comment == null)
-    {
-        return ['error' => 'invalid comment_id'];
-    }
-
-    $status =  $comment->update([
-        'title' => $request->input('title'),
-        'name' => $request->input('name'),
-        'email' => $request->input('email'),
-        'comment' => $request->input('comment'),
-    ]);
-
-    return ['status' => $status];
-});
+Route::put('/updateComment/{id}', [CommentApiController::class, 'updateComment']);
 
 //update comment
 //alternate version, does not require all the fields and only updates those which are present
-Route::put('/partiallyUpdateComment/{id}', function($id, Request $request) {
-    //if no fields are being updated then return an error
-    if(!$request->hasAny(['title', 'name', 'email', 'comment']))
-    {
-        return ['error' => 'missing input(s)'];
-    }
-
-    $comment = Comment::find($id);
-    if($comment == null)
-    {
-        return ['error' => 'invalid comment_id'];
-    }
-
-    //update this instance of the model in memory and then save changes to database
-    if($request->has('title'))
-    {
-        $comment->title = $request->input('title');
-    }
-    if($request->has('name'))
-    {
-        $comment->name = $request->input('name');
-    }
-    if($request->has('email'))
-    {
-        $comment->email = $request->input('email');
-    }
-    if($request->has('comment'))
-    {
-        $comment->comment = $request->input('comment');
-    }
-    $status = $comment->save(); //replace the database instance with this instance
-
-    return ['status' => $status];
-});
+Route::put('/partiallyUpdateComment/{id}', [CommentApiController::class, 'updateCommentPartial']);
 
 //delete comment
-Route::delete('/deleteComment/{id}', function($id) {
-
-    $comment = Comment::find($id);
-
-    if($comment == null)
-    {
-        return ['error' => 'invalid comment_id'];
-    }
-
-    $status = $comment->delete();
-
-    return ['status' => $status];
-});
+Route::delete('/deleteComment/{id}', [CommentApiController::class, 'deleteComment']);

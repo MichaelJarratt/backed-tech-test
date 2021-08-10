@@ -1,15 +1,13 @@
 
 //This file is used by the "rest client" extension. I can use it to make an API request and see the response.
 
-//GET http://backed-tech-test.test/api/blogs http/1.1
+GET http://backed-tech-test.test/api/blogs http/1.1
+
+###
 
 GET http://backed-tech-test.test/api/blog?id=1 http/1.1
 ###
 GET http://backed-tech-test.test/api/blog/1 http/1.1
-
-###
-
-GET http://backed-tech-test.test/api/singleBlogwithComments http/1.1
 
 
 ###
@@ -18,16 +16,16 @@ POST http://backed-tech-test.test/api/comment http/1.1
 Content-Type: application/json
 
 {
-    "title": "Sir",
+    "title": "Mr",
     "name": "Michael",
     "email": "Michael@Email.com",
-    "comment": "lorum ipsum dolor amet",
+    "comment": "lorum ipsum dolor amet sum",
     "blog_id": "40"
 }
 
 ###
 
-PUT http://backed-tech-test.test/api/updateComment/24001 http/1.1
+PUT http://backed-tech-test.test/api/updateComment/24005 http/1.1
 Content-Type: application/json
 
 {
@@ -39,16 +37,15 @@ Content-Type: application/json
 
 ###
 
-PUT http://backed-tech-test.test/api/partiallyUpdateComment/24001 http/1.1
+PUT http://backed-tech-test.test/api/partiallyUpdateComment/24005 http/1.1
 Content-Type: application/json
 
 {
-    "title": "Prof",
     "comment": "updated comment"
 }
 
 ###
 
-DELETE http://backed-tech-test.test/api/deleteComment/24004 http/1.1
+DELETE http://backed-tech-test.test/api/deleteComment/24005 http/1.1
 
 
